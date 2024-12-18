@@ -1,0 +1,47 @@
+body {
+    background-color: black;
+    color: #0af; /* Light blue text */
+    font-family: monospace;
+    font-size: 1.2em;
+    margin: 20px;
+}
+
+.prompt-container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.prompt-block {
+    
+    white-space: pre-line;
+}
+
+.user-response {
+    color: #0af; /* Light blue text */
+    font-family: monospace;
+
+}
+
+.input-field {
+    width: 80%;
+    background-color: black;
+    color: #0af; /* Light blue text */
+    border: solid #0af;
+    border-width: 0 0 1px 0;
+    font-family: monospace;
+    font-size: 1.2em;
+    caret-color: #0af; /* Blinking cursor color */
+}
+
+.submit-button {
+    background-color: black;
+    color: #0af;
+    padding: 5px 10px;
+    font-family: monospace;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+.error-message {
+    color: red;
+}

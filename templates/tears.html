@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tears in the Rain</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+body, html {
+    margin: 0;
+    padding: 0;
+    background: black;
+    color: #0af;
+    font-family: monospace;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Rain animation background (optional) */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url('https://www.icegif.com/wp-content/uploads/2023/04/icegif-452.gif') repeat;
+    /* You can have a rain.gif for effect, or use a CSS rain animation */
+    opacity: 0.4;
+    z-index: -1;
+}
+
+/* Container for the monologue text */
+.monologue-container {
+    position: absolute;
+    top: 20%;
+    left: 10%;
+    right: 10%;
+    color: #0af;
+    font-size: 1.2em;
+    line-height: 1.5;
+}
+
+/* Initially hidden lines */
+.monologue-line {
+    opacity: 0;
+    transition: opacity 3s ease-in;
+    margin-bottom: 20px;
+}
+
+/* Highlight/flicker class */
+.flicker {
+    color: rgb(128, 213, 255);
+    animation: flicker 1s ease-in-out;
+}
+@keyframes flicker {
+    0%,100% { color: #0af; }
+    50% { color: #fff; }
+}
+
+/* After the last line appears and some delay, we show the prompt */
+.prompt-container {
+    margin-top: 40px;
+    opacity: 0;
+    transition: opacity 2s ease-in;
+}
+
+input[type="text"] {
+    background-color: black;
+    color: #0af;
+    border: 1px solid #0af;
+    font-family: monospace;
+    font-size: 1em;
+    caret-color: #0af;
+    width: 70%;
+    margin-right: 10px;
+}
+
+input[type="submit"] {
+    background-color: black;
+    color: #0af;
+    border: 1px solid #0af;
+    padding: 5px 10px;
+    font-family: monospace;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const lines = document.querySelectorAll('.monologue-line');
+    const promptContainer = document.getElementById('promptContainer');
+
+    // Schedule appearance of lines (total ~45s)
+    // Let's say we have 5 lines. We'll space them out.
+    // Each line fades in over 3 seconds, so we can start each line at intervals.
+    // We'll also flicker certain letters in these lines after they appear.
+
+    // Delays for each line start (in ms)
+    const delays = [0, 6000, 12000, 18000, 24000, 30000, 36000 ]; 
+    // Total about 40 seconds until last line starts to appear, 
+    // plus 3 seconds fade-in = about 43 seconds, then 2s later show prompt ~45s.
+
+    // Flicker letters after line visible:
+    // Hidden message: P E T E R
+    // Choose letters: 
+    // Line 1: "People" -> Flicker "P" in "people"
+    // Line 2: "believe" from "believe" -> flicker the first "e"
+    // Line 3: "Attack" -> flicker "t"
+    // Line 4: "Tannhäuser" -> flicker first "e" in "Tears" from the phrase "like tears in rain"
+    // Actually "tears" is in line 4: "All those moments... like tears in rain."
+    // We'll flicker the 'e' in 'tears'
+    // Line 5: "rain" -> flicker 'r' in 'rain' or "Time" -> flicker 'r' in "rain"
+    // We’ll find these letters by spans given in HTML.
+
+    const flickers = [
+      {lineIndex:0, selector:'.flickerP'}, 
+      {lineIndex:1, selector:'.flickerE'},
+      {lineIndex:2, selector:'.flickerT'},
+      {lineIndex:3, selector:'.flickerE2'},
+      {lineIndex:6, selector:'.flickerR'}
+    ];
+
+    lines.forEach((line, i) => {
+        setTimeout(() => {
+            line.style.opacity = 1;
+            // Flicker after line visible
+            const f = flickers.find(f => f.lineIndex === i);
+            if (f) {
+                const letterEl = line.querySelector(f.selector);
+                if (letterEl) {
+                    setTimeout(() => {
+                        letterEl.classList.add('flicker');
+                    }, 2000); 
+                }
+            }
+        }, delays[i]);
+    });
+
+    // After last line visible + some extra time, show prompt
+    setTimeout(() => {
+        promptContainer.style.opacity = 1;
+
+    }, 40000); // 47s after load
+});
+
+
+
+</script>
+</head>
+<body>
+<div class="monologue-container">
+    <!-- 
+      We'll encode flicker letters as spans:
+
+    -->
+
+    <!-- Line 1 (~0s start): "I've seen things you people wouldn't believe." -->
+    <div class="monologue-line">
+        I've seen things you <span class="flickerP">p</span>eople wouldn't believe.
+    </div>
+
+    <!-- Line 2 (~8s start): "Attack ships on fire off the shoulder of Orion." -->
+    <div class="monologue-line">
+        Attack ships on fir<span class="flickerE">e</span> off the shoulder of Orion.
+    </div>
+
+    <!-- Line 3 (~16s start): "I watched C-beams glitter in the dark near the Tannhäuser Gate." -->
+    <div class="monologue-line">
+        I watched C-beams glitter in the dark near the <span class="flickerT">T</span>annhäuser Gate.
+    </div>
+
+    <!-- Line 4 (~24s start): "All those moments will be lost in time, like tears in rain." -->
+    <div class="monologue-line">
+        All those moments will be lost in time, like t<span class="flickerE2">e</span>ars in rain.
+    </div>
+
+    <!-- Line 5 (~32s start): "Time to die" -->
+    <div class="monologue-line">
+        Time to die.
+    </div>
+    <div class="monologue-line">...</div>
+    <div class="monologue-line">Who is your sec<span class="flickerR">r</span>et santa?</div>
+
+
+    <div class="prompt-container" id="promptContainer">
+        <form method="POST" action="{{ url_for('tears_check') }}">
+            
+            <input type="text" name="answer">
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</div>
+</body>
+</html>

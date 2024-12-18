@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>WarGames Prompt</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+<body>
+<div class="prompt-container">
+    {% for i in range(current_step) %}
+    <div class="prompt-block">
+        <p><strong>{{ prompts[i].prompt }}</strong><br>
+        <span class="user-response">{{ responses[i] }}</span></p>
+    </div>
+    {% endfor %}
+
+    {% if current_step < total_steps %}
+    <div class="prompt-block">
+        <p><strong>{{ prompts[current_step].prompt }}</strong></p>
+    </div>
+    <form method="POST">
+        <input type="text" name="answer" class="input-field" autofocus>
+        <input type="submit" value="Enter" class="submit-button">
+        {% if error %}
+        <p class="error-message">{{ error }}</p>
+        {% endif %}
+    </form>
+    {% else %}
+    <p><strong>All prompts completed. Game starting...</strong></p>
+    <!-- You can redirect or start the actual game logic here -->
+    {% endif %}
+</div>
+</body>
+</html>
